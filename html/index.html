@@ -1,14 +1,107 @@
-<div class="panel panel-info">
-    <div class="panel-heading"> Upload New Table
+<!DOCTYPE html>
+<html>
+<body>
 
-        <div class="clearfix"></div>
-    </div>
-    <div class="panel-body">
-      <form enctype = "multipart/form-data"
-                        action = "/cgi-bin/generate.py" method = "post">
-      <div>
-      <p>CSV table File: <input type = "file" required name = "filename1" /></p>
-      <p><input type = "submit" value = "Upload" /></p>
-      </form>
-    </div>
-</div>
+  <div class="panel panel-info">
+      <div class="panel-heading"> Disguised Missing Value Detecotor
+
+          <div class="clearfix"></div>
+      </div>
+      <div class="panel-body">
+        <form target="_blank" enctype = "multipart/form-data"
+                          action = "/cgi-bin/generate2.py" method = "post">
+        <div>
+        <p>Upload CSV table File: <input  id="csvfile" type = "file" required name = "filename1" onchange="myFunction(this)" /></p>
+        <p>Select Column for DMV<select id="mySelect" name="column" required>
+        </select>
+        <p><input type = "submit" value = "Upload" /></p></p>
+
+        </form>
+      </div>
+  </div>
+
+  <style>
+  table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  }
+
+  td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+  }
+
+  tr:nth-child(even) {
+  background-color: #dddddd;
+  }
+  </style>
+
+  <p id="divv"></p>
+
+<script>
+function myFunction(input) {
+  var reader = new FileReader();
+  reader.onload = function () {
+      var allLines = reader.result.split("\n");
+
+        // do what you want with the result
+        // ie: split lines and show the first line
+
+      var lineOne = allLines[0];
+      var attributes = lineOne.split(",");
+
+      for (index = 0; index < attributes.length; ++index) {
+        // get reference to select element
+        var sel = document.getElementById('mySelect');
+        // create new option element
+        var opt = document.createElement('option');
+        // create text node to add to option element (opt)
+        opt.appendChild( document.createTextNode(attributes[index]) );
+        // set value property of opt
+        opt.value = attributes[index];
+        // add opt to end of select box (sel)
+        sel.appendChild(opt);
+      }
+      var table = "<h2>Table Preview</h2> <table>";
+
+      var num = 30
+      if (allLines.length < num){
+        num = allLines.length
+      }
+      for (i = 0; i < num; i++){
+        content = allLines[i].split(",")
+        table = table.concat("<tr>");
+        for (j = 0; j < content.length; j++){
+          var str = content[j]
+          if (res = content[j].charAt(0) == "\""){
+            for(;;){
+              if(content[j].charAt(content[j].length - 1) != "\""){
+                j++
+                str = str.concat(content[j]);
+              }
+              else {
+                break;
+              }
+            }
+          };
+
+          table = table.concat("<th>");
+          table = table.concat(str);
+          table = table.concat("</th>");
+        }
+        table = table.concat("</tr>");
+      };
+      table = table.concat("</table>");
+      document.getElementById('divv').innerHTML = table;
+
+  };
+  // start reading the file. When it is done, calls the onload event defined above.
+  reader.readAsBinaryString(input.files[0]);
+
+}
+</script>
+
+</body>
+</html>

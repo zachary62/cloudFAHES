@@ -5,6 +5,7 @@
 import sys
 import os
 import pandas as pd
+from io import StringIO
 
 class sus_disguised:
     def __init__(self, attr_name, value, score, frequency, tool_name):
@@ -28,11 +29,12 @@ def check_d_quotation(str):
         return "\""+str+"\""
     return str
 
-def main2(table_name,column):
+def main2(file1,column):
 
     #check input csv
     try:
-        T = pd.read_csv(table_name, dtype=str)
+        io1 = StringIO(file1.file.read().decode("utf-8"))
+        T = pd.read_csv(io1, dtype=str, keep_default_na=False)
     except OSError as e:
         result = "Error reading csv!"
         return result

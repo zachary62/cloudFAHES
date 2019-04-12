@@ -45,7 +45,7 @@ def find_disguised_values(T, sus_dis_values,column):
                 largest_DV = DV_Score
         if dis_value is not None:
             ratio1 = dis_value.frequency / len(Temp_T)
-            ratio2 = len(Temp_hist) / len(Temp_T)
+            ratio2 = len(Temp_hist[KK[i]]) / len(Temp_T)
             # print(ratio1)
             # print(ratio2)
             # print(dis_value.value)
@@ -56,7 +56,10 @@ def find_disguised_values(T, sus_dis_values,column):
     return sus_dis_values
 
 def subtable_correlation(Temp_T, k, idx,RandDMVD_Index_T):
-    data = RandDMVD_Index_T[idx].get(k,0)
+    if k.lower() == "" or k.lower() == "null":
+        data = RandDMVD_Index_T[idx].get("NULL",0)
+    else:
+        data = RandDMVD_Index_T[idx].get(k,0)
     if data == 0:
         print("error not find in subtable_correlation")
         sys.exit(1)
