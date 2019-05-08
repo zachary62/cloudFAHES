@@ -1,20 +1,41 @@
 #!/usr/bin/python3.6
+# Zachary Huang
+# zhuang333@wisc.edu
 import cgi, os
 import cgitb; cgitb.enable()
 import traceback
+import pandas as pd
+from io import StringIO
+import datetime
 
 
 form = cgi.FieldStorage()
 # Get filename here.
 
 # Test if the file was uploaded
-
+A = None
 try:
-   import main
-   fileitem1 = form['filename1']
-   column = form['column'].value
-   message  = main.main2(fileitem1, column)
+    if 'filename2' in form.keys():
+        io1 = StringIO(form['filename2'].value.replace("\\n", "\n"))
+    else:
+        file1 = form['filename1']
+        io1 = StringIO(file1.file.read().decode("utf-8"))
+    A = pd.read_csv(io1)
+    cdate = str(datetime.datetime.now().strftime("%Y%m%d%H%M%S")) + ".csv"
+    A.to_csv("./data/" + cdate)
 
+    column = form['column'].value
+    # message  = main.main2(fileitem1, column)
+    import subprocess
+    cmd = [r"./FAHES", "./data/" + cdate, "./data/", "4", column]
+    # p = subprocess.Popen(["./FAHES " + "\"./data/" + cdate + "\" ./data/ 4 \"" + column + "\""], stdout=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+
+    message = p.stdout.read().decode("utf-8")
+    try:
+        os.remove("./data/" + cdate)
+    except OSError:
+        pass
 
 except Exception as e:
 
